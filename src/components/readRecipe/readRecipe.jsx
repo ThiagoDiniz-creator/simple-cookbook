@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -21,31 +21,60 @@ const styles = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 600,
+    width: "90%",
+    maxWidth: 600,
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 4,
     transition: "opacity 0.3s ease-in-out",
     borderRadius: "8px",
-    overflowY: "scroll",
+    overflowY: "auto",
+    maxHeight: "90vh",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: '4px',
   },
   timerContainer: {
     display: "flex",
     alignItems: "center",
-    mt: 2,
     borderTop: "1px solid #ccc",
     paddingTop: 2,
+    marginTop: '16px',
+  },
+  smallScreenModal: {
+    height: "100%",
+    borderRadius: 0,
+    p: 2,
+  },
+  smallScreenHeader: {
+    marginBottom: 8,
+  },
+  smallScreenTimerContainer: {
+    marginTop: 8,
   },
 };
 
 const ReadRecipe = ({ recipe, onClose }) => {
   const [open, setOpen] = useState(true);
   const [contentVisible, setContentVisible] = useState(true);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 320);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleCloseModal = () => {
     onClose();
@@ -69,10 +98,22 @@ const ReadRecipe = ({ recipe, onClose }) => {
 
   return (
     <Modal open={open} onClose={handleCloseModal}>
-      <Box sx={styles.modal}>
+      <Box
+        sx={
+          isSmallScreen
+            ? { ...styles.modal, ...styles.smallScreenModal }
+            : styles.modal
+        }
+      >
         {contentVisible && (
           <>
-            <Box sx={styles.header}>
+            <Box
+              sx={
+                isSmallScreen
+                  ? { ...styles.header, ...styles.smallScreenHeader }
+                  : styles.header
+              }
+            >
               <Typography variant='h5' gutterBottom>
                 {recipe.title}
               </Typography>
@@ -88,13 +129,22 @@ const ReadRecipe = ({ recipe, onClose }) => {
             <Typography variant='subtitle1'>
               Descrição: {recipe.description}
             </Typography>
-            <Box sx={styles.timerContainer}>
+            <Box
+              sx={
+                isSmallScreen
+                  ? {
+                      ...styles.timerContainer,
+                      ...styles.smallScreenTimerContainer,
+                    }
+                  : styles.timerContainer
+              }
+            >
               <TimerIcon sx={{ mr: 1, color: "#888" }} />
               <Typography variant='subtitle1'>
                 Tempo Total: {tempoTotal} minutos
               </Typography>
             </Box>
-            <TableContainer sx={{ marginTop: 4 }}>
+            <TableContainer sx={{ marginTop: isSmallScreen ? 2 : 4 }}>
               <Table>
                 <TableHead>
                   <TableRow>

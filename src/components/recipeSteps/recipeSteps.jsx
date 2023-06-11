@@ -27,10 +27,25 @@ const RecipeSteps = ({ steps: propsSteps, onChange }) => {
     ingredients: "",
   });
   const [editIndex, setEditIndex] = useState(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
     setSteps(propsSteps);
   }, [propsSteps]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 320);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleOpenModal = () => {
     setOpen(true);
@@ -102,11 +117,13 @@ const RecipeSteps = ({ steps: propsSteps, onChange }) => {
         border: "1px solid #ced4da",
         borderRadius: "4px",
         mb: 4,
+        overflowX: "auto",
+        maxWidth: "100%",
       }}
     >
       <Typography sx={{ textAlign: "center" }}>Etapas da receita</Typography>
       {steps.length > 0 ? (
-        <TableContainer sx={{ width: "100%" }}>
+        <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
@@ -158,16 +175,31 @@ const RecipeSteps = ({ steps: propsSteps, onChange }) => {
       </Button>
       <Modal open={open} onClose={handleCloseModal}>
         <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-          }}
+          sx={
+            isSmallScreen
+              ? {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "90%",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 2,
+                  overflowY: "scroll",
+                  maxHeight: "90vh",
+                }
+              : {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 400,
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 4,
+                }
+          }
         >
           <Typography variant='h5' gutterBottom>
             Etapas da receita

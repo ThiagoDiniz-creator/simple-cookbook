@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Button,
   Typography,
@@ -35,6 +35,21 @@ const CookbookActions = () => {
     steps: [],
   });
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 320);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleOpenAddModal = () => {
     setAddModalOpen(true);
@@ -199,18 +214,34 @@ const CookbookActions = () => {
 
       <Modal open={addModalOpen} onClose={handleCloseAddModal}>
         <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 700,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            overflowY: "auto",
-            maxHeight: "90vh",
-          }}
+          sx={
+            isSmallScreen
+              ? {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "90%",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 2,
+                  maxHeight: "90vh",
+                  overflow: "scroll",
+                }
+              : {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 700,
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 4,
+                  overflowY: "auto",
+                  maxHeight: "90vh",
+                  overflow: "scroll",
+                }
+          }
         >
           <Typography variant='h5' gutterBottom>
             Adicionar Receita
@@ -261,18 +292,34 @@ const CookbookActions = () => {
 
       <Modal open={editModalOpen} onClose={handleCloseEditModal}>
         <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 700,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            overflowY: "auto",
-            maxHeight: "90vh",
-          }}
+          sx={
+            isSmallScreen
+              ? {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "90%",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 2,
+                  maxHeight: "90vh",
+                  overflow: "scroll",
+                }
+              : {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 700,
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 4,
+                  overflowY: "auto",
+                  maxHeight: "90vh",
+                  overflow: "scroll",
+                }
+          }
         >
           <Typography variant='h5' gutterBottom>
             Editar Receita
@@ -336,17 +383,33 @@ const CookbookActions = () => {
 
       <Modal open={deleteModalOpen} onClose={handleCloseDeleteModal}>
         <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            overflowY: "auto",
-          }}
+          sx={
+            isSmallScreen
+              ? {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "90%",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 2,
+                  maxHeight: "90vh",
+                  overflow: "scroll",
+                }
+              : {
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 400,
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 4,
+                  overflowY: "auto",
+                  overflow: "scroll",
+                }
+          }
         >
           <Typography variant='h5' gutterBottom>
             Excluir Receita
