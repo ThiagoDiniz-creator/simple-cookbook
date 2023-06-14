@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -35,14 +35,14 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: '4px',
+    marginBottom: "4px",
   },
   timerContainer: {
     display: "flex",
     alignItems: "center",
     borderTop: "1px solid #ccc",
     paddingTop: 2,
-    marginTop: '16px',
+    marginTop: "16px",
   },
   smallScreenModal: {
     height: "100%",
@@ -60,21 +60,6 @@ const styles = {
 const ReadRecipe = ({ recipe, onClose }) => {
   const [open, setOpen] = useState(true);
   const [contentVisible, setContentVisible] = useState(true);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 320);
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const handleCloseModal = () => {
     onClose();
@@ -98,22 +83,10 @@ const ReadRecipe = ({ recipe, onClose }) => {
 
   return (
     <Modal open={open} onClose={handleCloseModal}>
-      <Box
-        sx={
-          isSmallScreen
-            ? { ...styles.modal, ...styles.smallScreenModal }
-            : styles.modal
-        }
-      >
+      <Box sx={[styles.modal, styles.smallScreenModal]}>
         {contentVisible && (
           <>
-            <Box
-              sx={
-                isSmallScreen
-                  ? { ...styles.header, ...styles.smallScreenHeader }
-                  : styles.header
-              }
-            >
+            <Box sx={[styles.header, styles.smallScreenHeader]}>
               <Typography variant='h5' gutterBottom>
                 {recipe.title}
               </Typography>
@@ -129,22 +102,13 @@ const ReadRecipe = ({ recipe, onClose }) => {
             <Typography variant='subtitle1'>
               Descrição: {recipe.description}
             </Typography>
-            <Box
-              sx={
-                isSmallScreen
-                  ? {
-                      ...styles.timerContainer,
-                      ...styles.smallScreenTimerContainer,
-                    }
-                  : styles.timerContainer
-              }
-            >
+            <Box sx={[styles.timerContainer, styles.smallScreenTimerContainer]}>
               <TimerIcon sx={{ mr: 1, color: "#888" }} />
               <Typography variant='subtitle1'>
                 Tempo Total: {tempoTotal} minutos
               </Typography>
             </Box>
-            <TableContainer sx={{ marginTop: isSmallScreen ? 2 : 4 }}>
+            <TableContainer sx={{ marginTop: 2 }}>
               <Table>
                 <TableHead>
                   <TableRow>

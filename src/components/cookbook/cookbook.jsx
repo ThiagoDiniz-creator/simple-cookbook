@@ -55,17 +55,18 @@ const Cookbook = () => {
         height: "90vh",
         overflowX: "hidden",
         overflowY: "auto",
+        padding: "2px",
       }}
     >
       <TextField
         label='Pesquisar receitas por nome, descrição ou autor'
-        variant='outlined'
+        variant='filled'
         value={searchQuery}
         onChange={handleSearchChange}
         fullWidth
         sx={{ mb: 2, width: "80vw" }}
       />
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ flex: 1 }}>
         {filteredCookbook.map(recipe => (
           <Grid item xs={12} sm={6} md={4} key={recipe.id} sx={{ padding: 0 }}>
             <Card sx={styles.card} onClick={() => handleRecipeClick(recipe)}>

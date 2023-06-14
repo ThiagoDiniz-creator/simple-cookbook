@@ -1,25 +1,14 @@
-import { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Typography,
-  Modal,
-  Box,
-  TextField,
-  Select,
-  MenuItem,
-  Snackbar,
-  SpeedDial,
-  SpeedDialIcon,
-  SpeedDialAction,
-} from "@mui/material";
+import { useContext, useState } from "react";
+import { SpeedDial, SpeedDialIcon, SpeedDialAction } from "@mui/material";
 import { CookbookContext } from "../../context/cookbookContext";
-import RecipeSteps from "../recipeSteps/recipeSteps";
 import {
   AddCircleOutline,
-  EditNotificationsOutlined,
   EditOutlined,
   RemoveCircleOutline,
 } from "@mui/icons-material";
+import DeleteRecipeModal from "../deleteRecipeModal/deleteRecipeModal";
+import EditRecipeModal from "../editRecipeModal/editRecipeModal";
+import AddRecipeModal from "../addRecipeModal/addRecipeModal";
 
 const CookbookActions = () => {
   const { cookbook, setCookbook } = useContext(CookbookContext);
@@ -34,22 +23,6 @@ const CookbookActions = () => {
     author: "",
     steps: [],
   });
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 320);
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const handleOpenAddModal = () => {
     setAddModalOpen(true);
@@ -104,10 +77,6 @@ const CookbookActions = () => {
     });
   };
 
-  const handleSnackbarClose = () => {
-    setIsSnackbarOpen(false);
-  };
-
   const handleAddRecipe = () => {
     if (
       recipeData.title.trim() === "" ||
@@ -115,7 +84,6 @@ const CookbookActions = () => {
       recipeData.author.trim() === "" ||
       recipeData.steps.length === 0
     ) {
-      setIsSnackbarOpen(true);
       return;
     }
 
@@ -141,7 +109,6 @@ const CookbookActions = () => {
       recipeData.author.trim() === "" ||
       recipeData.steps.length === 0
     ) {
-      setIsSnackbarOpen(true);
       return;
     }
 
@@ -156,7 +123,6 @@ const CookbookActions = () => {
 
   const handleDeleteRecipe = () => {
     if (recipeData.id === "") {
-      setIsSnackbarOpen(true);
       return;
     }
 
@@ -212,236 +178,48 @@ const CookbookActions = () => {
         />
       </SpeedDial>
 
-      <Modal open={addModalOpen} onClose={handleCloseAddModal}>
-        <Box
-          sx={
-            isSmallScreen
-              ? {
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "90%",
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                  p: 2,
-                  maxHeight: "90vh",
-                  overflow: "scroll",
-                }
-              : {
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 700,
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                  p: 4,
-                  overflowY: "auto",
-                  maxHeight: "90vh",
-                  overflow: "scroll",
-                }
-          }
-        >
-          <Typography variant='h5' gutterBottom>
-            Adicionar Receita
-          </Typography>
-          <TextField
-            label='Título'
-            name='title'
-            value={recipeData.title}
-            onChange={handleRecipeDataChange}
-            fullWidth
-            margin='normal'
-            required
-          />
-          <TextField
-            label='Descrição'
-            name='description'
-            value={recipeData.description}
-            onChange={handleRecipeDataChange}
-            fullWidth
-            margin='normal'
-            required
-          />
-          <TextField
-            label='Autor'
-            name='author'
-            value={recipeData.author}
-            onChange={handleRecipeDataChange}
-            fullWidth
-            margin='normal'
-            required
-          />
-          <RecipeSteps onChange={handleStepChange} steps={recipeData.steps} />
-          <Button
-            variant='contained'
-            onClick={handleAddRecipe}
-            fullWidth
-            disabled={
-              recipeData.title.trim() === "" ||
-              recipeData.description.trim() === "" ||
-              recipeData.author.trim() === "" ||
-              recipeData.steps.length === 0
-            }
-          >
-            Confirmar Adição
-          </Button>
-        </Box>
-      </Modal>
+      <AddRecipeModal
+        open={addModalOpen}
+        onClose={handleCloseAddModal}
+        recipeData={recipeData}
+        handleRecipeDataChange={handleRecipeDataChange}
+        handleStepChange={handleStepChange}
+        handleAddRecipe={handleAddRecipe}
+        isDisabled={
+          recipeData.title.trim() === "" ||
+          recipeData.description.trim() === "" ||
+          recipeData.author.trim() === "" ||
+          recipeData.steps.length === 0
+        }
+      />
 
-      <Modal open={editModalOpen} onClose={handleCloseEditModal}>
-        <Box
-          sx={
-            isSmallScreen
-              ? {
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "90%",
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                  p: 2,
-                  maxHeight: "90vh",
-                  overflow: "scroll",
-                }
-              : {
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 700,
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                  p: 4,
-                  overflowY: "auto",
-                  maxHeight: "90vh",
-                  overflow: "scroll",
-                }
-          }
-        >
-          <Typography variant='h5' gutterBottom>
-            Editar Receita
-          </Typography>
-          <Select
-            value={selectedRecipeId}
-            onChange={handleRecipeSelectChange}
-            fullWidth
-            margin='normal'
-          >
-            {cookbook.map(recipe => (
-              <MenuItem key={recipe.id} value={recipe.id}>
-                {recipe.title}
-              </MenuItem>
-            ))}
-          </Select>
-          <TextField
-            label='Título'
-            name='title'
-            value={recipeData.title}
-            onChange={handleRecipeDataChange}
-            fullWidth
-            margin='normal'
-            required
-          />
-          <TextField
-            label='Descrição'
-            name='description'
-            value={recipeData.description}
-            onChange={handleRecipeDataChange}
-            fullWidth
-            margin='normal'
-            required
-          />
-          <TextField
-            label='Autor'
-            name='author'
-            value={recipeData.author}
-            onChange={handleRecipeDataChange}
-            fullWidth
-            margin='normal'
-            required
-          />
-          <RecipeSteps onChange={handleStepChange} steps={recipeData.steps} />
-          <Button
-            variant='contained'
-            onClick={handleEditRecipe}
-            fullWidth
-            disabled={
-              selectedRecipeId === "" ||
-              recipeData.title.trim() === "" ||
-              recipeData.description.trim() === "" ||
-              recipeData.author.trim() === "" ||
-              recipeData.steps.length === 0
-            }
-          >
-            Confirmar Edição
-          </Button>
-        </Box>
-      </Modal>
+      <EditRecipeModal
+        open={editModalOpen}
+        onClose={handleCloseEditModal}
+        cookbook={cookbook}
+        selectedRecipeId={selectedRecipeId}
+        handleRecipeSelectChange={handleRecipeSelectChange}
+        recipeData={recipeData}
+        handleRecipeDataChange={handleRecipeDataChange}
+        handleStepChange={handleStepChange}
+        handleEditRecipe={handleEditRecipe}
+        isDisabled={
+          selectedRecipeId === "" ||
+          recipeData.title.trim() === "" ||
+          recipeData.description.trim() === "" ||
+          recipeData.author.trim() === "" ||
+          recipeData.steps.length === 0
+        }
+      />
 
-      <Modal open={deleteModalOpen} onClose={handleCloseDeleteModal}>
-        <Box
-          sx={
-            isSmallScreen
-              ? {
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "90%",
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                  p: 2,
-                  maxHeight: "90vh",
-                  overflow: "scroll",
-                }
-              : {
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 400,
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                  p: 4,
-                  overflowY: "auto",
-                  overflow: "scroll",
-                }
-          }
-        >
-          <Typography variant='h5' gutterBottom>
-            Excluir Receita
-          </Typography>
-          <Select
-            value={selectedRecipeId}
-            onChange={handleRecipeSelectChange}
-            fullWidth
-            margin='normal'
-          >
-            {cookbook.map(recipe => (
-              <MenuItem key={recipe.id} value={recipe.id}>
-                {recipe.title}
-              </MenuItem>
-            ))}
-          </Select>
-          <Button
-            variant='contained'
-            onClick={handleDeleteRecipe}
-            fullWidth
-            disabled={recipeData.id === ""}
-          >
-            Confirmar Exclusão
-          </Button>
-        </Box>
-      </Modal>
-
-      <Snackbar
-        open={isSnackbarOpen}
-        onClose={handleSnackbarClose}
-        autoHideDuration={3000}
-        message='Preencha todos os campos'
+      <DeleteRecipeModal
+        open={deleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        cookbook={cookbook}
+        selectedRecipeId={selectedRecipeId}
+        handleRecipeSelectChange={handleRecipeSelectChange}
+        recipeData={recipeData}
+        handleDeleteRecipe={handleDeleteRecipe}
       />
     </>
   );
